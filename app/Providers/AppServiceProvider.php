@@ -11,7 +11,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            \App\Repositories\Superadmin\UserRepository::class,
+            \App\Repositories\Superadmin\UserRepositoryImpl::class,
+        );
+
+        $this->app->bind(
+            \App\Services\Superadmin\UserService::class,
+            \App\Services\Superadmin\UserServiceImpl::class,
+        );
     }
 
     /**
@@ -19,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Implicitly grant "superadmin" role all permissions
+        // This works even if permissions are not explicitly assigned to the role
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            return $user->hasRole('superadmin') ? true : null;
+        });
     }
 }
