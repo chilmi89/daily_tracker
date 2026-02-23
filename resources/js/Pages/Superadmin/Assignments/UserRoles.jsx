@@ -51,36 +51,43 @@ export default function UserRoles({ users, roles }) {
             />
 
             <DataTable 
-                headers={['#', 'Pengguna', 'Role Saat Ini', 'Aksi']}
+                headers={[
+                    { label: '#', width: '80px' }, 
+                    'Identitas Pengguna', 
+                    { label: 'Role Saat Ini', align: 'center' }, 
+                    { label: 'Aksi', align: 'center' }
+                ]}
                 empty={users.length === 0}
             >
                 {users.map((user, i) => (
                     <tr key={user.id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                        <td className="px-6 py-3.5 w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <td className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                             {String(i + 1).padStart(2, '0')}
                         </td>
-                        <td className="px-6 py-3.5">
-                            <div className="flex flex-col">
+                        <td className="px-8 py-5">
+                            <div className="flex flex-col items-center">
                                 <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{user.name}</span>
                                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">{user.email}</span>
                             </div>
                         </td>
-                        <td className="px-6 py-3.5">
-                            <div className="flex flex-wrap gap-1.5">
+                        <td className="px-8 py-5 text-center">
+                            <div className="flex flex-wrap justify-center gap-2">
                                 {user.roles.length > 0 ? user.roles.map(role => (
-                                    <span key={role.id} className="px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-indigo-500/5 text-indigo-600 border border-indigo-500/10">
+                                    <span key={role.id} className="px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest bg-indigo-500/5 text-indigo-600 border border-indigo-500/10 italic">
                                         {role.name}
                                     </span>
                                 )) : (
-                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest italic">Belum ada role</span>
+                                    <span className="text-[10px] font-black text-slate-300 dark:text-slate-800 uppercase italic tracking-widest">No Roles</span>
                                 )}
                             </div>
                         </td>
-                        <td className="px-6 py-3.5 text-right">
-                            <Button variant="flat" size="sm" onClick={() => openModal(user)}>
-                                <Settings2 className="mr-2" size={14} />
-                                Kelola Role
-                            </Button>
+                        <td className="px-8 py-5 text-center whitespace-nowrap">
+                            <div className="flex justify-center">
+                                <Button variant="flat" size="sm" onClick={() => openModal(user)} className="rounded-2xl border-indigo-500/10 hover:border-indigo-500/40">
+                                    <Settings2 className="mr-2" size={14} />
+                                    Kelola Role
+                                </Button>
+                            </div>
                         </td>
                     </tr>
                 ))}

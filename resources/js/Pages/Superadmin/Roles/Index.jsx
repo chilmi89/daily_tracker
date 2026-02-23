@@ -65,37 +65,43 @@ export default function Index({ roles }) {
             </PageHeader>
 
             <DataTable 
-                headers={['#', 'Identitas Role', 'Total Permissions', 'Guard', 'Aksi']}
+                headers={[
+                    { label: '#', width: '80px' }, 
+                    'Identitas Role', 
+                    { label: 'Total Permissions', align: 'center' }, 
+                    { label: 'Guard', align: 'center' }, 
+                    { label: 'Aksi', align: 'center' }
+                ]}
                 empty={roles.length === 0}
                 emptyMessage="Belum ada role terdefinisi"
             >
                 {roles.map((role, i) => (
                     <tr key={role.id} className="group hover:bg-slate-50/80 dark:hover:bg-indigo-950/10 transition-colors duration-200">
-                        <td className="px-6 py-3.5 w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <td className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                             {String(i + 1).padStart(2, '0')}
                         </td>
-                        <td className="px-6 py-3.5">
-                            <div className="flex items-center gap-4">
+                        <td className="px-8 py-5">
+                            <div className="flex items-center justify-center gap-4">
                                 <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-purple-500/10 to-indigo-500/10 border border-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 font-black text-xs uppercase group-hover:scale-110 transition-transform duration-300 shrink-0">
                                     <Shield size={16} strokeWidth={2.5} />
                                 </div>
                                 <span className="text-sm font-black text-gray-900 dark:text-white truncate tracking-tight uppercase italic">{role.name}</span>
                             </div>
                         </td>
-                        <td className="px-6 py-3.5">
-                            <span className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 inline-block">
-                                {role.permissions?.length || 0} Permissions Assigned
+                        <td className="px-8 py-5 text-center">
+                            <span className="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 inline-block italic">
+                                {role.permissions?.length || 0} Permissions
                             </span>
                         </td>
-                        <td className="px-6 py-3.5">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{role.guard_name}</span>
+                        <td className="px-8 py-5 text-center">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic opacity-60">{role.guard_name}</span>
                         </td>
-                        <td className="px-6 py-3.5 text-right">
-                            <div className="flex items-center justify-end gap-2 text-slate-400">
-                                <button onClick={() => openEditModal(role)} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all">
+                        <td className="px-8 py-5 text-center whitespace-nowrap">
+                            <div className="flex items-center justify-center gap-2 text-slate-400">
+                                <button onClick={() => openEditModal(role)} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 transition-all">
                                     <Edit3 size={14} strokeWidth={2.5} />
                                 </button>
-                                <button onClick={() => handleDelete(role.id, role.name)} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all">
+                                <button onClick={() => handleDelete(role.id, role.name)} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-800 transition-all">
                                     <Trash2 size={14} strokeWidth={2.5} />
                                 </button>
                             </div>

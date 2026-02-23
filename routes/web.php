@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Settings/Index');
     })->name('settings');
 
-    // Superadmin Area
+        // Superadmin Area
     Route::prefix('superadmin')
         ->name('superadmin.')
         ->middleware('role:superadmin')
@@ -53,6 +53,14 @@ Route::middleware('auth')->group(function () {
                 Route::put('role-permissions/{role}', [App\Http\Controllers\superadmin\RolePermissionAssignmentController::class, 'update'])->name('roles.update');
             });
             Route::resource('permissions', \App\Http\Controllers\superadmin\PermissionController::class)->except(['create', 'edit', 'show']);
+        });
+
+    // Admin Area
+    Route::prefix('admin')
+        ->name('admin.')
+        ->middleware('role:admin')
+        ->group(function () {
+            Route::get('/', [\App\Http\Controllers\admin\AdminDashboardController::class, 'index'])->name('index');
         });
 });
 
