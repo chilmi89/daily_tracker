@@ -2,13 +2,13 @@
 
 namespace App\Services\Superadmin;
 
-use App\Repositories\Superadmin\UserRepository;
+use App\Repositories\Superadmin\RoleRepository;
 use Illuminate\Support\Facades\Hash;
 
-class UserServiceImpl implements UserService
+class RoleImpl implements Role
 {
     public function __construct(
-        protected UserRepository $repository
+        protected RoleRepository $repository
     ) {}
 
     public function getAll()
@@ -44,12 +44,6 @@ class UserServiceImpl implements UserService
     public function delete(int $id)
     {
         return $this->repository->delete($id);
-    }
-
-    public function syncRoles(int $id, array $roles)
-    {
-        $user = $this->repository->findById($id);
-        return $user->syncRoles($roles);
     }
 
     public function syncPermissions(int $id, array $permissions)

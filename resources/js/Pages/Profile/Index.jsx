@@ -1,0 +1,20 @@
+import React from 'react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import PageHeader from '@/Components/UI/PageHeader';
+import Card from '@/Components/UI/Card';
+
+export default function Index() {
+    return (
+        <AuthenticatedLayout title="Profile">
+            <PageHeader 
+                title="User Profile" 
+                description="Manage your account information and security."
+            />
+            <Card title="Profile Details" description="This page is under construction.">
+                <div className="py-20 text-center">
+                    <p className="text-slate-400 font-bold uppercase tracking-widest">Coming Soon</p>
+                </div>
+            </Card>
+        </AuthenticatedLayout>
+    );
+}
