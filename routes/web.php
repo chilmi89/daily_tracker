@@ -3,9 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\superadmin\UserController as SuperadminUserController;
+use App\Http\Controllers\superadmin\RoleController as SuperadminRoleController;
 use App\Http\Controllers\Auth\AuthController;
 
-// Root redirect
+// Root Redirect
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -14,22 +15,22 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return Inertia::render('Dashboard');
     })->name('dashboard');
 
     // Users (General)
     Route::get('/users', function () {
-        return view('users.index');
+        return Inertia::render('Users/Index');
     })->name('users.index');
 
     // Profile
     Route::get('/profile', function () {
-        return view('profile.index');
+        return Inertia::render('Profile/Index');
     })->name('profile');
 
     // Settings
     Route::get('/settings', function () {
-        return view('settings.index');
+        return Inertia::render('Settings/Index');
     })->name('settings');
 
     // Superadmin Area
@@ -37,11 +38,21 @@ Route::middleware('auth')->group(function () {
         ->name('superadmin.')
         ->middleware('role:superadmin')
         ->group(function () {
-            Route::get('/', function () {
-                return view('superadmin.index');
-            })->name('index');
+            Route::get('/', [\App\Http\Controllers\superadmin\SuperadminDashboardController::class, 'index'])->name('index');
 
             Route::resource('users', SuperadminUserController::class);
+            
+            Route::resource('roles', SuperadminRoleController::class)->except(['create', 'edit', 'show']);
+
+            // Decoupled Assignments
+            Route::prefix('assignments')->name('assignments.')->group(function () {
+                Route::get('user-roles', [App\Http\Controllers\superadmin\UserRoleAssignmentController::class, 'index'])->name('users.index');
+                Route::put('user-roles/{user}', [App\Http\Controllers\superadmin\UserRoleAssignmentController::class, 'update'])->name('users.update');
+                
+                Route::get('role-permissions', [App\Http\Controllers\superadmin\RolePermissionAssignmentController::class, 'index'])->name('roles.index');
+                Route::put('role-permissions/{role}', [App\Http\Controllers\superadmin\RolePermissionAssignmentController::class, 'update'])->name('roles.update');
+            });
+            Route::resource('permissions', \App\Http\Controllers\superadmin\PermissionController::class)->except(['create', 'edit', 'show']);
         });
 });
 

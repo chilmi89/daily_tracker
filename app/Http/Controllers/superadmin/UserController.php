@@ -16,8 +16,12 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->service->getAll();
+        $roles = \Spatie\Permission\Models\Role::all();
 
-        return view('superadmin.users.index', compact('users'));
+        return \Inertia\Inertia::render('Superadmin/Users/Index', [
+            'users' => $users,
+            'roles' => $roles
+        ]);
     }
 
     public function store(Request $request)
@@ -81,6 +85,30 @@ class UserController extends Controller
         } catch (Throwable $e) {
             return redirect()->route('superadmin.users.index')
                 ->with('toast', ['type' => 'error', 'message' => 'Gagal menghapus pengguna. ' . $e->getMessage()]);
+        }
+    }
+
+    public function assignRole(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'role' => ['nullable', 'string', 'exists:roles,name'],
+        ]);
+
+        try {
+            $user = $this->service->findById($id);
+            $this->service->syncRoles($id, $validated['role'] ? [$validated['role']] : []);
+
+            return redirect()->route('superadmin.users.index')
+                ->with('toast', [
+                    'type' => 'success', 
+                    'message' => "Role berhasil diperbarui untuk pengguna \"{$user->name}\"."
+                ]);
+        } catch (Throwable $e) {
+            return redirect()->route('superadmin.users.index')
+                ->with('toast', [
+                    'type' => 'error', 
+                    'message' => 'Gagal memperbarui role perngguna. ' . $e->getMessage()
+                ]);
         }
     }
 }
