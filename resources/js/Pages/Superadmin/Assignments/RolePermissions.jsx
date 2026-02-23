@@ -56,32 +56,36 @@ export default function RolePermissions({ roles, permissions }) {
             />
 
             <DataTable 
-                headers={['#', 'Nama Role', 'Total Izin', 'Aksi']}
+                headers={['#', 'Nama Role', 'Total Izin', { label: 'Aksi', align: 'center' }]}
                 empty={roles.length === 0}
             >
                 {roles.map((role, i) => (
                     <tr key={role.id} className="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                        <td className="px-6 py-3.5 w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <td className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                             {String(i + 1).padStart(2, '0')}
                         </td>
-                        <td className="px-6 py-3.5">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-600">
+                        <td className="px-8 py-5">
+                            <div className="flex items-center justify-center gap-4">
+                                <div className="w-9 h-9 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-600 border border-purple-500/10 group-hover:rotate-12 transition-transform">
                                     <Key size={14} />
                                 </div>
                                 <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{role.name}</span>
                             </div>
                         </td>
-                        <td className="px-6 py-3.5">
-                            <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-500/5 text-emerald-600 border border-emerald-500/10">
-                                {role.permissions.length} Permissions
-                            </span>
+                        <td className="px-8 py-5 text-center">
+                            <div className="flex justify-center">
+                                <span className="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 shadow-sm shadow-emerald-500/5">
+                                    {role.permissions.length} Permissions
+                                </span>
+                            </div>
                         </td>
-                        <td className="px-6 py-3.5 text-right">
-                            <Button variant="flat" size="sm" onClick={() => openModal(role)}>
-                                <Settings2 className="mr-2" size={14} />
-                                Atur Izin
-                            </Button>
+                        <td className="px-8 py-5 text-center whitespace-nowrap">
+                            <div className="flex justify-center">
+                                <Button variant="flat" size="sm" onClick={() => openModal(role)} className="rounded-2xl border-purple-500/10 hover:border-purple-500/40">
+                                    <Settings2 className="mr-2" size={14} />
+                                    Atur Izin
+                                </Button>
+                            </div>
                         </td>
                     </tr>
                 ))}

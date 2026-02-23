@@ -65,35 +65,41 @@ export default function Index({ permissions }) {
             </PageHeader>
 
             <DataTable 
-                headers={['#', 'Identitas Permission', 'Guard Name', 'Bergabung', 'Aksi']}
+                headers={[
+                    { label: '#', width: '80px' }, 
+                    'Identitas Permission', 
+                    { label: 'Guard Name', align: 'center' }, 
+                    { label: 'Bergabung', align: 'center' }, 
+                    { label: 'Aksi', align: 'center' }
+                ]}
                 empty={permissions.length === 0}
                 emptyMessage="Belum ada permission terdefinisi"
             >
                 {permissions.map((perm, i) => (
                     <tr key={perm.id} className="group hover:bg-slate-50/80 dark:hover:bg-indigo-950/10 transition-colors duration-200">
-                        <td className="px-6 py-3.5 w-12 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <td className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                             {String(i + 1).padStart(2, '0')}
                         </td>
-                        <td className="px-6 py-3.5">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-500/10 to-emerald-500/10 border border-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-black text-xs group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <td className="px-8 py-5">
+                            <div className="flex items-center justify-center gap-4">
+                                <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-500/10 to-emerald-500/10 border border-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-black text-xs group-hover:rotate-12 transition-transform duration-300 shrink-0">
                                     <Key size={16} strokeWidth={2.5} />
                                 </div>
                                 <span className="text-sm font-black text-gray-900 dark:text-white truncate tracking-tight uppercase italic">{perm.name}</span>
                             </div>
                         </td>
-                        <td className="px-6 py-3.5">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{perm.guard_name}</span>
+                        <td className="px-8 py-5 text-center">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic opacity-60">{perm.guard_name}</span>
                         </td>
-                        <td className="px-6 py-3.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">
+                        <td className="px-8 py-5 text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
                             {new Date(perm.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </td>
-                        <td className="px-6 py-3.5 text-right">
-                            <div className="flex items-center justify-end gap-2 text-slate-400">
-                                <button onClick={() => openEditModal(perm)} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all">
+                        <td className="px-8 py-5 text-center whitespace-nowrap">
+                            <div className="flex items-center justify-center gap-2 text-slate-400">
+                                <button onClick={() => openEditModal(perm)} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 transition-all">
                                     <Edit3 size={14} strokeWidth={2.5} />
                                 </button>
-                                <button onClick={() => handleDelete(perm.id, perm.name)} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all">
+                                <button onClick={() => handleDelete(perm.id, perm.name)} className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-800 transition-all">
                                     <Trash2 size={14} strokeWidth={2.5} />
                                 </button>
                             </div>
