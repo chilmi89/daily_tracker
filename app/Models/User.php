@@ -17,7 +17,7 @@ class User extends Authenticatable
         'password',
         'employee_code',
         'position',
-        'department',
+        'department_id',
         'manager_id',
         'join_date',
         'status',
@@ -42,6 +42,12 @@ class User extends Authenticatable
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    /** Department user ini */
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
 
     /** Manager (atasan) */
     public function manager()
