@@ -5,6 +5,7 @@ namespace App\Http\Controllers\superadmin;
 use App\Http\Controllers\Controller;
 use App\Services\Superadmin\UserService;
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -22,11 +23,15 @@ class UserController extends Controller
             ->where('status', 'active')
             ->orderBy('name')
             ->get();
+        $departments = Department::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']);
 
         return \Inertia\Inertia::render('Superadmin/Users/Index', [
-            'users'    => $users,
-            'roles'    => $roles,
-            'managers' => $managers,
+            'users'       => $users,
+            'roles'       => $roles,
+            'managers'    => $managers,
+            'departments' => $departments,
         ]);
     }
 

@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/UI/PageHeader';
 import DataTable from '@/Components/UI/DataTable';
 import Button from '@/Components/UI/Button';
 import Modal from '@/Components/UI/Modal';
-import { UserPlus, Edit3, Trash2, CheckCircle2, CircleDashed, Briefcase } from 'lucide-react';
+import { UserPlus, Edit3, Trash2, CheckCircle2, CircleDashed, Briefcase, CalendarDays, X, Users2, ShieldCheck, XCircle } from 'lucide-react';
 
 /* ─── Constants ───────────────────────────────────────────── */
-const DEPARTMENTS = [
-    'Engineering', 'HR', 'Finance', 'Marketing',
-    'Operations', 'Sales', 'Management',
-];
 
 const emptyForm = {
     name: '', email: '', password: '', role: '',
@@ -24,6 +20,15 @@ const inp = "w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:b
 const lbl = "text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 block";
 const err = "mt-1 text-[10px] text-rose-500 font-bold";
 
+/* Tailwind stat card color map (static — tidak boleh dynamic) */
+const STAT_COLORS = {
+    indigo:  { bg: 'bg-indigo-500/10',                     text: 'text-indigo-500'  },
+    emerald: { bg: 'bg-emerald-500/10',                    text: 'text-emerald-500' },
+    slate:   { bg: 'bg-slate-200/60 dark:bg-slate-800/60', text: 'text-slate-400'   },
+    purple:  { bg: 'bg-purple-500/10',                     text: 'text-purple-500'  },
+    amber:   { bg: 'bg-amber-500/10',                      text: 'text-amber-500'   },
+    rose:    { bg: 'bg-rose-500/10',                       text: 'text-rose-500'    },
+};
 /* ─── Status Badge ────────────────────────────────────────── */
 function StatusBadge({ status }) {
     const active = !status || status === 'active';
@@ -41,8 +46,70 @@ function StatusBadge({ status }) {
     );
 }
 
+/* ─── Custom Date Picker ─────────────────────────────────── */
+const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function DatePicker({ value, onChange, placeholder = 'Pilih tanggal...', error }) {
+    const inputRef = useRef(null);
+
+    const formatted = (() => {
+        if (!value) return '';
+        const [y, m, d] = value.split('-');
+        if (!y || !m || !d) return '';
+        return `${parseInt(d, 10)} ${MONTHS_ID[parseInt(m, 10) - 1]} ${y}`;
+    })();
+
+    return (
+        <div className="relative">
+            {/* Visible display button */}
+            <button
+                type="button"
+                onClick={() => inputRef.current?.showPicker?.() || inputRef.current?.click()}
+                className={`
+                    w-full flex items-center gap-3 text-left
+                    bg-slate-50 dark:bg-slate-950
+                    border ${error ? 'border-rose-400' : 'border-slate-200 dark:border-slate-800'}
+                    rounded-2xl px-4 py-4 text-sm font-bold shadow-inner
+                    focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all
+                    hover:border-indigo-400/60 group
+                `}
+            >
+                <CalendarDays size={16} strokeWidth={2}
+                    className="text-indigo-500 shrink-0 group-hover:scale-110 transition-transform" />
+                <span className={formatted ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400 font-medium'}>
+                    {formatted || placeholder}
+                </span>
+                {value && (
+                    <span
+                        role="button"
+                        onClick={e => { e.stopPropagation(); onChange(''); }}
+                        className="ml-auto text-slate-300 hover:text-rose-400 transition-colors cursor-pointer"
+                    >
+                        <X size={14} strokeWidth={2.5} />
+                    </span>
+                )}
+                {!value && (
+                    <span className="ml-auto text-slate-300">
+                        <CalendarDays size={14} strokeWidth={1.5} />
+                    </span>
+                )}
+            </button>
+
+            {/* Hidden native date input — triggers the system date picker */}
+            <input
+                ref={inputRef}
+                type="date"
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="sr-only"
+                tabIndex={-1}
+            />
+        </div>
+    );
+}
+
 /* ─── Reusable Field Form ─────────────────────────────────── */
-function UserForm({ data, setData, errors, roles, managers, isEdit = false }) {
+function UserForm({ data, setData, errors, roles, managers, departments, isEdit = false }) {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
@@ -83,10 +150,15 @@ function UserForm({ data, setData, errors, roles, managers, isEdit = false }) {
 
             {/* Kode Karyawan */}
             <div>
-                <label className={lbl}>Kode Karyawan</label>
+                <label className={lbl}>
+                    Kode Karyawan
+                    <span className="ml-2 text-indigo-400 normal-case tracking-normal font-bold">
+                        (opsional — auto-generate jika kosong)
+                    </span>
+                </label>
                 <input type="text" value={data.employee_code}
-                    onChange={e => setData('employee_code', e.target.value)}
-                    className={inp} placeholder="Cth: EMP-001" />
+                    onChange={e => setData('employee_code', e.target.value.toUpperCase())}
+                    className={inp} placeholder="Kosongkan untuk auto → EMP-001" />
                 {errors.employee_code && <p className={err}>{errors.employee_code}</p>}
             </div>
 
@@ -106,7 +178,11 @@ function UserForm({ data, setData, errors, roles, managers, isEdit = false }) {
                     onChange={e => setData('department', e.target.value)}
                     className={inp + ' appearance-none'}>
                     <option value="">-- Pilih Departemen --</option>
-                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                    {departments.map(d => (
+                        <option key={d.id} value={d.name}>
+                            {d.name}{d.code ? ` (${d.code})` : ''}
+                        </option>
+                    ))}
                 </select>
                 {errors.department && <p className={err}>{errors.department}</p>}
             </div>
@@ -130,9 +206,12 @@ function UserForm({ data, setData, errors, roles, managers, isEdit = false }) {
             {/* Tanggal Bergabung */}
             <div>
                 <label className={lbl}>Tanggal Bergabung</label>
-                <input type="date" value={data.join_date}
-                    onChange={e => setData('join_date', e.target.value)}
-                    className={inp} />
+                <DatePicker
+                    value={data.join_date}
+                    onChange={val => setData('join_date', val)}
+                    placeholder="Klik untuk pilih tanggal..."
+                    error={!!errors.join_date}
+                />
                 {errors.join_date && <p className={err}>{errors.join_date}</p>}
             </div>
 
@@ -164,7 +243,7 @@ function UserForm({ data, setData, errors, roles, managers, isEdit = false }) {
 }
 
 /* ─── Main Page ───────────────────────────────────────────── */
-export default function Index({ users, roles, managers }) {
+export default function Index({ users, roles, managers, departments }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen,   setIsEditModalOpen]   = useState(false);
     const [editingUser,       setEditingUser]        = useState(null);
@@ -219,10 +298,10 @@ export default function Index({ users, roles, managers }) {
     };
 
     const stats = [
-        { label: 'Total Pengguna', value: users.length,                                                                           color: 'indigo'  },
-        { label: 'Superadmin',     value: users.filter(u => u.roles?.some(r => r.name === 'superadmin')).length,                  color: 'purple'  },
-        { label: 'Aktif',          value: users.filter(u => !u.status || u.status === 'active').length,                           color: 'emerald' },
-        { label: 'Non-aktif',      value: users.filter(u => u.status === 'inactive').length,                                      color: 'slate'   },
+        { label: 'Total Pengguna', value: users.length,                                                              color: 'indigo',  icon: Users2       },
+        { label: 'Superadmin',     value: users.filter(u => u.roles?.some(r => r.name === 'superadmin')).length,     color: 'purple',  icon: ShieldCheck  },
+        { label: 'Aktif',          value: users.filter(u => !u.status || u.status === 'active').length,              color: 'emerald', icon: CheckCircle2 },
+        { label: 'Non-aktif',      value: users.filter(u => u.status === 'inactive').length,                         color: 'slate',   icon: XCircle      },
     ];
 
     const modalProps = (isCreate) => ({
@@ -258,17 +337,21 @@ export default function Index({ users, roles, managers }) {
 
             {/* Stats Bar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                {stats.map((stat, i) => (
-                    <div key={i} className="bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl rounded-3xl border border-gray-100 dark:border-slate-800/40 px-5 py-4 flex items-center gap-4 shadow-sm">
-                        <div className={`w-10 h-10 rounded-2xl bg-${stat.color}-500/10 flex items-center justify-center`}>
-                            <div className={`w-2.5 h-2.5 rounded-full bg-${stat.color}-500 shadow-lg shadow-${stat.color}-500/50`} />
+                {stats.map((stat, i) => {
+                    const c = STAT_COLORS[stat.color] ?? STAT_COLORS.slate;
+                    const Icon = stat.icon;
+                    return (
+                        <div key={i} className="bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl rounded-3xl border border-gray-100 dark:border-slate-800/40 px-5 py-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                            <div className={`w-11 h-11 rounded-2xl ${c.bg} flex items-center justify-center shrink-0 ${c.text}`}>
+                                <Icon size={20} strokeWidth={2} />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">{stat.value}</p>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.18em] mt-0.5 truncate">{stat.label}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter">{stat.value}</p>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{stat.label}</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Data Table */}
@@ -352,6 +435,7 @@ export default function Index({ users, roles, managers }) {
                     <UserForm
                         data={createData} setData={setCreateData}
                         errors={createErrors} roles={roles} managers={managers}
+                        departments={departments}
                     />
                 </form>
             </Modal>
@@ -362,6 +446,7 @@ export default function Index({ users, roles, managers }) {
                     <UserForm
                         data={editData} setData={setEditData}
                         errors={editErrors} roles={roles} managers={managers}
+                        departments={departments}
                         isEdit
                     />
                 </form>
