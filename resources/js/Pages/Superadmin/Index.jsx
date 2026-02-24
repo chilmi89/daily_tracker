@@ -35,10 +35,10 @@ import {
 
 export default function Index({ stats, growthData, performanceData, roleDistribution }) {
     const mainStats = [
-        { label: 'Total Users', val: stats.total_users.toLocaleString(), icon: Users, color: 'indigo' },
-        { label: 'System Roles', val: stats.total_roles.toLocaleString(), icon: Shield, color: 'purple' },
-        { label: 'Active Permissions', val: stats.total_permissions.toLocaleString(), icon: Key, color: 'emerald' },
-        { label: 'Server Load', val: stats.server_load, icon: Activity, color: 'amber' }
+        { label: 'Total Pengguna', val: stats.total_users.toLocaleString(),       icon: Users,     color: 'indigo'  },
+        { label: 'Pengguna Aktif', val: stats.active_users?.toLocaleString() ?? '—', icon: Activity,  color: 'emerald' },
+        { label: 'System Roles',   val: stats.total_roles.toLocaleString(),        icon: Shield,    color: 'purple'  },
+        { label: 'Permissions',    val: stats.total_permissions.toLocaleString(),  icon: Key,       color: 'amber'   },
     ];
 
     const COLORS = ['#4f46e5', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];

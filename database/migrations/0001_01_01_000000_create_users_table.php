@@ -14,10 +14,23 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // Employee Profile
+            $table->string('employee_code', 50)->unique()->nullable();
+            $table->string('position', 100)->nullable();
+            $table->string('department', 100)->nullable();
+
+            // Hierarchy
+            $table->foreignId('manager_id')->nullable()->constrained('users')->nullOnDelete();
+
+            // HR Info
+            $table->date('join_date')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+
             $table->timestamps();
         });
 
@@ -42,8 +55,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

@@ -208,6 +208,6 @@ const Index = ({ authUser }) => {
             </div>
         </AuthenticatedLayout>
     );
-};
+};  
 
 export default Index;
