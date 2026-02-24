@@ -15,10 +15,12 @@ class SuperadminDashboardController extends Controller
     public function index()
     {
         $stats = [
-            'total_users' => User::count(),
-            'total_roles' => Role::count(),
+            'total_users'       => User::count(),
+            'active_users'      => User::where('status', 'active')->orWhereNull('status')->count(),
+            'inactive_users'    => User::where('status', 'inactive')->count(),
+            'total_roles'       => Role::count(),
             'total_permissions' => Permission::count(),
-            'server_load' => '24%',
+            'server_load'       => '24%',
         ];
 
         // 1. User Growth Data (for Area Chart)

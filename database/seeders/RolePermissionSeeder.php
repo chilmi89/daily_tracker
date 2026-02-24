@@ -2,38 +2,45 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // Reset cache (WAJIB di Spatie)
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 1. Define Permissions
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Define Permissions (MVP Base)
+        |--------------------------------------------------------------------------
+        */
+
         $permissions = [
+
             // Core System
             'dashboard.view',
             'settings.view',
             'settings.edit',
-            
-            // RBAC Management (Superadmin Only)
+
+            // RBAC Management
             'roles.view',
             'roles.create',
             'roles.edit',
             'roles.delete',
+
             'permissions.view',
             'permissions.create',
             'permissions.edit',
             'permissions.delete',
+
             'users.assign-role',
             'roles.assign-permission',
-            
+
             // User Management
             'users.view',
             'users.create',
@@ -46,7 +53,7 @@ class RolePermissionSeeder extends Seeder
             'activity.edit',
             'activity.delete',
 
-            // Daily Tracker - Monitoring
+            // Monitoring & Reports
             'monitoring.view',
             'report.export',
         ];
@@ -55,26 +62,15 @@ class RolePermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // 2. Create Roles and Assign Permissions
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Superadmin Role (Full Access)
+        |--------------------------------------------------------------------------
+        */
 
-        // --- Role Admin (Supervisor / Manager) ---
-        $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
-        $roleAdmin->syncPermissions([
-            'dashboard.view',
-            'users.view',
-            'users.create',
-            'users.edit',
-            'activity.view',
-            'activity.create',
-            'activity.edit',
-            'activity.delete',
-            'monitoring.view',
-            'report.export',
-        ]);
+        $superadmin = Role::firstOrCreate(['name' => 'superadmin']);
 
-        // --- Role Superadmin (System Owner) ---
-        $roleSuperAdmin = Role::firstOrCreate(['name' => 'superadmin']);
-        // Superadmin gets everything
-        $roleSuperAdmin->syncPermissions(Permission::all());
+        // Superadmin = semua permission
+        $superadmin->syncPermissions(Permission::all());
     }
 }

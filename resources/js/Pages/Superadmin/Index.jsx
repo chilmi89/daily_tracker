@@ -33,12 +33,20 @@ import {
     Legend
 } from 'recharts';
 
+/* Static color map — Tailwind tidak bisa compile dynamic string */
+const DASH_COLORS = {
+    indigo:  { bg: 'bg-indigo-500/10',  text: 'text-indigo-600 dark:text-indigo-400'  },
+    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400' },
+    purple:  { bg: 'bg-purple-500/10',  text: 'text-purple-600 dark:text-purple-400'  },
+    amber:   { bg: 'bg-amber-500/10',   text: 'text-amber-600 dark:text-amber-400'    },
+};
+
 export default function Index({ stats, growthData, performanceData, roleDistribution }) {
     const mainStats = [
-        { label: 'Total Users', val: stats.total_users.toLocaleString(), icon: Users, color: 'indigo' },
-        { label: 'System Roles', val: stats.total_roles.toLocaleString(), icon: Shield, color: 'purple' },
-        { label: 'Active Permissions', val: stats.total_permissions.toLocaleString(), icon: Key, color: 'emerald' },
-        { label: 'Server Load', val: stats.server_load, icon: Activity, color: 'amber' }
+        { label: 'Total Pengguna', val: stats.total_users.toLocaleString(),          icon: Users,    color: 'indigo'  },
+        { label: 'Pengguna Aktif', val: stats.active_users?.toLocaleString() ?? '—', icon: Activity, color: 'emerald' },
+        { label: 'System Roles',   val: stats.total_roles.toLocaleString(),           icon: Shield,   color: 'purple'  },
+        { label: 'Permissions',    val: stats.total_permissions.toLocaleString(),     icon: Key,      color: 'amber'   },
     ];
 
     const COLORS = ['#4f46e5', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
@@ -96,19 +104,22 @@ export default function Index({ stats, growthData, performanceData, roleDistribu
 
             {/* Quick Actions Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                {mainStats.map((stat, i) => (
-                    <Card key={i} padding="p-6">
-                        <div className="flex items-center gap-5">
-                            <div className={`w-14 h-14 rounded-2xl bg-${stat.color}-500/10 flex items-center justify-center text-${stat.color}-600 shadow-inner group-hover/card:scale-110 transition-transform`}>
-                                <stat.icon size={24} strokeWidth={2.5} />
+                {mainStats.map((stat, i) => {
+                    const c = DASH_COLORS[stat.color] ?? DASH_COLORS.indigo;
+                    return (
+                        <Card key={i} padding="p-6">
+                            <div className="flex items-center gap-5">
+                                <div className={`w-14 h-14 rounded-2xl ${c.bg} flex items-center justify-center ${c.text} shadow-inner group-hover/card:scale-110 transition-transform`}>
+                                    <stat.icon size={24} strokeWidth={2.5} />
+                                </div>
+                                <div>
+                                    <p className="text-3xl font-black text-gray-900 dark:text-white tracking-tighter leading-none mb-1">{stat.val}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-3xl font-black text-gray-900 dark:text-white tracking-tighter leading-none mb-1">{stat.val}</p>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                            </div>
-                        </div>
-                    </Card>
-                ))}
+                        </Card>
+                    );
+                })}
             </div>
 
             {/* Advanced Charts Section - Structured Layout */}

@@ -16,7 +16,8 @@ import {
     Home,
     Key,
     UserCircle,
-    ShieldAlert
+    ShieldAlert,
+    Building2
 } from 'lucide-react';
 import Toast from '@/Components/UI/Toast';
 
@@ -97,12 +98,13 @@ export default function AuthenticatedLayout({ children, title }) {
     ];
 
     const adminItems = [
-        { label: 'Admin Dashboard', icon: Home, href: getHref('superadmin.index'), active: isCurrent('superadmin.index') },
-        { label: 'Manage Users', icon: Users, href: getHref('superadmin.users.index'), active: isCurrent('superadmin.users.index') },
-        { label: 'Manage Roles', icon: ShieldCheck, href: getHref('superadmin.roles.index'), active: isCurrent('superadmin.roles.index') },
-        { label: 'Manage Permissions', icon: Key, href: getHref('superadmin.permissions.index'), active: isCurrent('superadmin.permissions.index') },
-        { label: 'Role Assignments', icon: UserCircle, href: getHref('superadmin.assignments.users.index'), active: isCurrent('superadmin.assignments.users.index') },
-        { label: 'Permission Assignments', icon: ShieldAlert, href: getHref('superadmin.assignments.roles.index'), active: isCurrent('superadmin.assignments.roles.index') },
+        { label: 'Admin Dashboard',        icon: Home,       href: getHref('superadmin.index'),                    active: isCurrent('superadmin.index') },
+        { label: 'Manage Users',            icon: Users,      href: getHref('superadmin.users.index'),              active: isCurrent('superadmin.users.index') },
+        { label: 'Departments',             icon: Building2,  href: getHref('superadmin.departments.index'),        active: isCurrent('superadmin.departments.index') },
+        { label: 'Manage Roles',            icon: ShieldCheck,href: getHref('superadmin.roles.index'),              active: isCurrent('superadmin.roles.index') },
+        { label: 'Manage Permissions',      icon: Key,        href: getHref('superadmin.permissions.index'),        active: isCurrent('superadmin.permissions.index') },
+        { label: 'Role Assignments',        icon: UserCircle, href: getHref('superadmin.assignments.users.index'),  active: isCurrent('superadmin.assignments.users.index') },
+        { label: 'Permission Assignments',  icon: ShieldAlert,href: getHref('superadmin.assignments.roles.index'), active: isCurrent('superadmin.assignments.roles.index') },
         ...(isSuperAdmin ? [
             { label: 'Profile', icon: User, href: getHref('profile'), active: isCurrent('profile') },
             { label: 'Settings', icon: Settings, href: getHref('settings'), active: isCurrent('settings') },

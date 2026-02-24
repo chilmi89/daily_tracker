@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('role-permissions/{role}', [App\Http\Controllers\superadmin\RolePermissionAssignmentController::class, 'update'])->name('roles.update');
             });
             Route::resource('permissions', \App\Http\Controllers\superadmin\PermissionController::class)->except(['create', 'edit', 'show']);
+            Route::resource('departments', \App\Http\Controllers\superadmin\DepartmentController::class)->except(['create', 'edit', 'show']);
         });
 
     // Admin Area
