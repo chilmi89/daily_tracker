@@ -16,10 +16,12 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Superadmin\UserRepository::class,
             \App\Repositories\Superadmin\RoleRepository::class,
             \App\Repositories\Superadmin\PermissionRepository::class,
+            \App\Repositories\Superadmin\TaskRepository::class,
 
             // Services - tetap pakai interface + implementation
             \App\Services\Superadmin\UserService::class => \App\Services\Superadmin\UserServiceImpl::class,
-            \App\Services\Superadmin\Role::class => \App\Services\Superadmin\RoleImpl::class,
+            \App\Services\Superadmin\Role::class        => \App\Services\Superadmin\RoleImpl::class,
+            \App\Services\Superadmin\TaskService::class => \App\Services\Superadmin\TaskServiceImpl::class,
         ];
 
         foreach ($bindings as $key => $value) {

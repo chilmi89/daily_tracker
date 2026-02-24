@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
             });
             Route::resource('permissions', \App\Http\Controllers\superadmin\PermissionController::class)->except(['create', 'edit', 'show']);
             Route::resource('departments', \App\Http\Controllers\superadmin\DepartmentController::class)->except(['create', 'edit', 'show']);
+            Route::resource('tasks',       \App\Http\Controllers\superadmin\SuperTaskController::class)->except(['create', 'edit', 'show']);
         });
 
     // Admin Area
